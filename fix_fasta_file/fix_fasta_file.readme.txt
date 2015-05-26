@@ -1,0 +1,12 @@
+fix_fasta_file README
+Author: Sarah P. Flanagan
+Date: 15 May 2015
+Purpose: To take a fasta file that has end-of-line characters in the sequence and remove them so that the sequence is on a single line.
+Usage:
+./fix_fasta_file 
+-f: input fasta file (e.g. my_seqs.fasta)
+-o: optional output fasta name. Default is [input_fasta_name].new.fasta (e.g. my_seqs.new.fasta)
+-h: prints a help message
+no arguments: runs in interactive mode
+
+Compile with g++ with the -std=c++0x flag (built with C++ 2011 dependencies)

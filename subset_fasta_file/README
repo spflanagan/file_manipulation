@@ -1,0 +1,23 @@
+# subset_fasta_files
+#This program reads in a fasta file and then pulls out only the relevant entries from a list
+
+
+//Required information: 
+//(1) a fasta file and 
+//(2) a file with a list of strings to match
+//The list file needs to have each query on its own line, 
+//without the characteristic ">" preceding the names
+
+//Optional: add a -c flag to the function call to have the program output ONE file
+//with all of the subsetted fasta records Combined, rather than one file per record (default)
+
+//Output:
+//One file with the subset of data requested by the file
+
+//Usage:
+//Takes a list of query strings and creates a new file with data for individual observations matching the queries 
+//-f: fasta file input (including path)
+//-l: list of queries (including path)
+//-c: Optional flag that indicates all records in list should be Combined into one file. Otherwise, one file per fasta ID is created.
+//-h: Prints help message
+//no arguments: interactive mode (as opposed to passing arguments to the program)

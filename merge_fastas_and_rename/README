@@ -1,0 +1,22 @@
+# merge_fastas_and_rename
+#This program reads in multiple fasta files and renames them for use in a paml analysis pipeline
+
+
+//Required information: 
+//(1) a fasta file names (can be a list, separated by commas) and 
+//(2) a list of species codes, input in order as fasta files, separated by commas
+//Do not put spaces between fasta file names or species codes!
+
+//Example:
+./merge_fastas_and_rename -f spp1.fasta,spp2.fasta,spp3.fasta -n spp1,spp2,spp3 -o spp1.2.3.fasta
+
+//Output:
+//One file with the combined reads. Default name is combined_reads.fasta.
+
+//Usage:
+//./merge_fastas_and_rename
+//-f: Fasta file name, including path. Must be separated by commas (no spaces in between)
+//-n: List of species codes, in the same order as fasta file names, separated by commas (no spaces in between)
+//-o: output file name (including path). Default: combined_reads.fasta
+//-h: Prints this message
+//no arguments: interactive mode

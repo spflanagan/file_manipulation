@@ -1,0 +1,18 @@
+#fasta_from_catalog
+#This program creates a fasta file based on a list of RAD loci and the RAD catalog file from Stacks
+
+
+//Required information: 
+//(1) Stacks batch_x.catalog.tags.tsv file
+//(2) file with a list of RAD loci
+
+//Output:
+//One file with the sequences of the selected RAD loci. Default name is output.fasta.
+
+//Usage:
+//./fasta_from_catalog
+//-c: Stacks catalog file, including path (default: batch_1.catalog.tags.tsv)
+//-l: List of RAD tag Locus IDs to select (including path)
+//-o: output file name (including path). Default: output.fasta
+//-h: Prints this message
+//no arguments: interactive mode
