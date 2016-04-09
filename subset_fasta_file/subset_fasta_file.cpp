@@ -82,7 +82,7 @@ public:
 	}
 };
 
-int read_fasta_record(ifstream &fasta_file, vector <fasta_record> &record)
+int read_fasta_record(ifstream &fasta_file, vector <fasta_record> &record, bool full_title)
 {
 	int count = 0;
 	string line;
@@ -96,7 +96,15 @@ int read_fasta_record(ifstream &fasta_file, vector <fasta_record> &record)
 				//it's the name
 				record.push_back(fasta_record());
 				count++;
-				record[count - 1].seq_id = line.substr(1, line.size());
+				if (full_title)
+					record[count - 1].seq_id = line.substr(1, line.size());
+				else
+				{
+					stringstream ss;
+					ss.str(line);
+					ss >> line;
+					record[count - 1].seq_id = line.substr(1, line.size());
+				}
 			}
 			//if (line.substr(0, 1) == "A" || line.substr(0, 1) == "T" || line.substr(0, 1) == "C" || line.substr(0, 1) == "G" || line.substr(0, 1) == "N")
 			else
@@ -117,7 +125,7 @@ int main(int argc, char* argv[])
 	ifstream fasta_in, list_in;
 	ofstream fasta_out;
 	vector<fasta_record> fasta_data;
-	bool interactivemode, combine;
+	bool interactivemode, combine, complete_name;
 	string query, tempstring1, tempstring2;
 	vector <string> scaffold_names;
 	combine = false;
@@ -132,6 +140,7 @@ int main(int argc, char* argv[])
 			cout << "Take a fasta file that has sequences split onto multiple lines and put each sequence on only one line\n";
 			cout << "-f:\tfasta file input\n";
 			cout << "-l:\tList of Fasta Record IDs\n";
+			cout << "-s:\tIf included, Shorten the name to just the first component separated by spaces.\n";
 			cout << "-c:\tIf included, it means that all records in list should be Combined into one file. Otherwise, one file per fasta ID.\n";
 			cout << "-h:\tPrints this message\n";
 			cout << "no arguments:\tinteractive mode\n";
@@ -150,6 +159,7 @@ int main(int argc, char* argv[])
 			cout << "Take a fasta file that has sequences split onto multiple lines and put each sequence on only one line\n";
 			cout << "-f:\tfasta file input\n";
 			cout << "-l:\tList of Fasta Record IDs\n";
+			cout << "-s:\tIf included, Shorten the name to just the first component separated by spaces.\n";
 			cout << "-c:\tIf included, it means that all records in list should be Combined into one file. Otherwise, one file per fasta ID.\n";
 			cout << "-h:\tPrints this message\n";
 			cout << "no arguments:\tinteractive mode\n";
@@ -161,13 +171,15 @@ int main(int argc, char* argv[])
 	{
 		interactivemode = false;
 		tempstring1 = argv[i];
-		tempstring2 = argv[i + 1];
+		//tempstring2 = argv[i + 1];
 		if (tempstring1 == "-f")
-			fasta_in_name = tempstring2;
+			fasta_in_name = argv[i + 1];
 		if (tempstring1 == "-l")
-			list_name = tempstring2;
+			list_name = argv[i + 1];
 		if (tempstring1 == "-c")
 			combine = true;
+		if (tempstring1 == "-s")
+			complete_name = true;
 	}
 
 	if (interactivemode)
@@ -182,6 +194,14 @@ int main(int argc, char* argv[])
 		{
 			combine = true;
 		}
+		cout << "Do you want to use the complete fasta record name? Options are full line or just the first element separated by spaces. Y or N\n";
+		cin >> tempstring1;
+		if (tempstring1 == "Y" || tempstring1 == "y")
+		{
+			complete_name = true;
+		}
+		else
+			complete_name = false;
 	}
 
 	if (combine)
@@ -226,7 +246,7 @@ int main(int argc, char* argv[])
 
 	fasta_in.open(fasta_in_name);
 	FileTest(fasta_in, fasta_in_name);
-	num_records = read_fasta_record(fasta_in, fasta_data);
+	num_records = read_fasta_record(fasta_in, fasta_data, complete_name);
 	fasta_in.close();
 	cout << fasta_in_name << " had " << num_records << " sequences.\n";
 	if (combine)
@@ -235,7 +255,7 @@ int main(int argc, char* argv[])
 		fasta_out.open(fasta_out_name);
 	}
 	int count = 0;
-	for (i = 1; i < num_records; i++)
+	for (i = 0; i < num_records; i++)
 	{
 		for (j = 0; j < num_ids; j++)
 		{
