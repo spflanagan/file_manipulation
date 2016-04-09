@@ -109,7 +109,7 @@ int read_fasta_record(ifstream &fasta_file, vector <fasta_record> &record, bool 
 			//if (line.substr(0, 1) == "A" || line.substr(0, 1) == "T" || line.substr(0, 1) == "C" || line.substr(0, 1) == "G" || line.substr(0, 1) == "N")
 			else
 			{//it's the sequence
-				if (line.substr(0, 1) != "\n")
+				if (line.substr(0, 1) != "\n" && line != "")
 					record[count - 1].sequence.append(line);
 			}
 		}
