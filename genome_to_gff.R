@@ -5,12 +5,13 @@
 
 rm(list=ls())
 
-#*****INPUT INFO HERE*****#
+#*******************START INPUT INFO HERE*************************#
 genome.path<-"E:/ubuntushare/scovelli_genome/"
-dat.file<-"Trinity_DEbrain_toScogenome_blastresults"
+dat.file<-"E:/ubuntushare/Trinity_DEbrain_toScogenome_blastresults"
 out.dir<-"E:/ubuntushare"
 blast<-TRUE #is dat.file a blast file?
 sam<-FALSE #is dat.file a sam file?
+#********************END INPUT INFO HERE**************************#
 
 #####GENOME DATA
 genome<-read.delim(paste(genome.path,"SSC_genome.agp",sep=""),	
@@ -42,9 +43,25 @@ gff.chrom<-levels(gff$V1)
 #####GET SAM INFO
 sam2gff<-function(samrow){
 	rel.gff<-gff[gff$sequence %in% samrow["RNAME"],]
-	out<-rel.gff[as.numeric(rel.gff$start) <= as.numeric(samrow["POS"]) & 
-		as.numeric(rel.gff$end) >= as.numeric(samrow["POS"]) &
-		 rel.gff$feature != "contig",]
+	if(nrow(rel.gff)==0){
+		scaffid<-gen[gen$object %in% samrow["RNAME"],]
+		gffid<-scaffid[
+			as.numeric(scaffid$object_beg) <= 
+				as.numeric(samrow["POS"]) & 
+			as.numeric(scaffid$object_end) >= 
+				as.numeric(samrow["POS"]),]
+		start.pos<-as.numeric(samrow["POS"])-
+			as.numeric(gffid$object_beg)
+		end.pos<-as.numeric(blastrow["send"])-as.numeric(gffid$object_beg)
+		rel.gff<-gff[gff$sequence %in% gffid$component_id,]
+		out<-rel.gff[as.numeric(rel.gff$start) <= start.pos & 
+			as.numeric(rel.gff$end) >= end.pos,]
+	} else {
+		out<-rel.gff[as.numeric(rel.gff$start) <= 
+				as.numeric(samrow["POS"]) & 
+			as.numeric(rel.gff$end) >= as.numeric(samrow["POS"]),]
+	}
+
 	if(nrow(out)>0){
 		out<-cbind(QNAME=rep(samrow["QNAME"],nrow(out)), 
 			POS=rep(samrow["POS"],nrow(out)), out)
@@ -75,8 +92,14 @@ blast2gff<-function(blastrow){
 			as.numeric(rel.gff$end) >= as.numeric(blastrow["send"]),]
 	}
 	if(nrow(out)>0){
-		out<-cbind(qseqid=rep(blastrow["qseqid"],nrow(out)), 
-			POS=rep(blastrow["qseqid"],nrow(out)), out)
+		out<-cbind(qseqid=rep(blastrow["qseqid"],	nrow(out)), 
+			Chrom=rep(blastrow["sseqid"],nrow(out)),
+			pident=rep(blastrow["pident"],nrow(out)),
+			length=rep(blastrow["length"],nrow(out)),
+			mismatch=rep(blastrow["mismatch"],nrow(out)),
+			gapopen=rep(blastrow["gapopen"],nrow(out)), 
+			evalue=rep(blastrow["evalue"],nrow(out)),
+			bitscore=rep(blastrow["bitscore"],nrow(out)),out)
 		return(out)
 	}
 }
